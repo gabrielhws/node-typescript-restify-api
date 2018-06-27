@@ -1,0 +1,34 @@
+{
+  "name": "typescript-restify-api",
+  "version": "1.0.0",
+  "description": "RESTful NodeJs/TypeScript Sample API with Restfy",
+  "main": "main.ts",
+  "scripts": {
+    "start": "nodemon dist/main.js --exec babel-node --presets es2015,stage-2",
+    "build": "babel lib -d dist",
+    "serve": "node dist/main.js",
+    "test": "mocha --compilers js:babel-register"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gabrielhws/node-typescript-restify-api.git"
+  },
+  "author": "Gabriel Ferreira <gabrielhws@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gabrielhws/node-typescript-restify-api/issues"
+  },
+  "homepage": "https://github.com/gabrielhws/node-typescript-restify-api#readme",
+  "dependencies": {
+    "log4js": "^0.3.3",
+    "restify": "^7.2.1"
+  },
+  "devDependencies": {
+    "@types/log4js": "0.0.33",
+    "@types/node": "^10.3.6",
+    "@types/restify": "^7.2.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1"
+  }
+}
