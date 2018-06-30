@@ -1,28 +1,28 @@
 import config from '../config/env/all';
 import * as restify from 'restify';
 import * as log4js from 'log4js';
+import {Router} from '../src/middleware/router';
 const log = log4js.getLogger('server-ts');
 
 export class Server {
 
-    public application:restify.Server;
+    public app:restify.Server;
 
-    initRoutes(): Promise<any>{
+    initRoutes(routers): Promise<any>{
         return new Promise((resolve, reject)=>{
             try{
-                this.application = restify.createServer({
+                this.app = restify.createServer({
                     name:'typescript-restify-api',
                     version:'1.0.0'
                 });
-                this.application.use(restify.plugins.queryParser());
+                this.app.use(restify.plugins.queryParser());
 
-                this.application.get('/', (req, resp, next)=>{
-                    resp.send(200, {message:'RESTful NodeJs/TypeScript With Restify Sample running =D'});
-                    next();
-                });
+                for (let router of routers){
+                    router.applyRoutes(this.app);
+                }
 
-                this.application.listen(config.port,()=>{
-                    resolve(this.application);
+                this.app.listen(config.port,()=>{
+                    resolve(this.app);
                 });
             }catch (error) {
                 reject(error);
@@ -30,7 +30,7 @@ export class Server {
         });
     }
 
-    bootstrap():Promise<Server>{
-        return this.initRoutes().then(()=>this)
+    bootstrap(routers:Router[]=[]):Promise<Server>{
+        return this.initRoutes(routers).then(()=>this)
     }
 }

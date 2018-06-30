@@ -1,5 +1,5 @@
 export default {
-    port: process.env.PORT || 5001,
+    port: process.env.PORT || 3000,
     domain: process.env.DOMAIN_REST || 'https://your_domain.com',
     domain_2: process.env.DOMAIN_REST || 'https://your_domain.com',
     title: 'NodeJs/TypeScript Sample Restify-API',
