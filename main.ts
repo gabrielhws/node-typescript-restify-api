@@ -1,9 +1,12 @@
 import {Server} from './server/server';
 import * as log4js from 'log4js';
 import {Routes} from './src/middleware/routes';
-const log = log4js.getLogger('main');
+
+
 
 const server = new Server();
+
+const log = log4js.getLogger('main');
 
 server.bootstrap(Routes)
     .then(server => {

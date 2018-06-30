@@ -20,11 +20,17 @@
   },
   "homepage": "https://github.com/gabrielhws/node-typescript-restify-api#readme",
   "dependencies": {
+    "glob": "^7.1.2",
+    "lodash": "^4.17.10",
     "log4js": "^0.3.3",
+    "mongoose": "^5.1.7",
     "restify": "^7.2.1"
   },
   "devDependencies": {
+    "@types/glob": "^5.0.35",
+    "@types/lodash": "^4.14.110",
     "@types/log4js": "0.0.33",
+    "@types/mongoose": "^5.0.18",
     "@types/node": "^10.3.6",
     "@types/restify": "^7.2.1",
     "babel-cli": "^6.26.0",
