@@ -1,6 +1,6 @@
 import {config} from '../config/env/all'
+import {DB} from '../src/middleware/db';
 import * as restify from 'restify';
-import * as mongoose from 'mongoose';
 import * as log4js from 'log4js';
 import {Router} from '../src/middleware/router';
 const log = log4js.getLogger('server');
@@ -9,14 +9,12 @@ export class Server {
 
     public app:restify.Server;
 
-
-    initDb(){
-        return mongoose.connect(config.database.host, {
-
-        });
+    private static initDb(){
+        const db = new DB();
+        return db.conn().then(()=>{}).catch((err)=>{log.error(JSON.stringify(err));});
     }
 
-    initRoutes(routers): Promise<any>{
+    private initRoutes(routers): Promise<any>{
         return new Promise((resolve, reject)=>{
             try{
                 this.app = restify.createServer({
@@ -39,11 +37,14 @@ export class Server {
         });
     }
 
-    bootstrap(routers:Router[]=[]):Promise<Server>{
-        return this.initDb()
-            .then(()=>
-                this.initRoutes(routers).then(()=>this)
-            );
+    public bootstrap(routers:Router[]=[]):Promise<any>{
 
+        return Server.initDb()
+            .then(()=>{
+                return this.initRoutes(routers).then(() => this);
+            })
+            .catch((err)=>{
+                log.error(JSON.stringify(err));
+            });
     }
 }

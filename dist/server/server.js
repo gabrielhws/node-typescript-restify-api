@@ -1,13 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const all_1 = require("../config/env/all");
+const db_1 = require("../src/middleware/db");
 const restify = require("restify");
-const mongoose = require("mongoose");
 const log4js = require("log4js");
 const log = log4js.getLogger('server');
 class Server {
-    initDb() {
-        return mongoose.connect(all_1.config.database.host, {});
+    static initDb() {
+        const db = new db_1.DB();
+        return db.conn().then(() => { }).catch((err) => { log.error(JSON.stringify(err)); });
     }
     initRoutes(routers) {
         return new Promise((resolve, reject) => {
@@ -31,8 +32,13 @@ class Server {
         });
     }
     bootstrap(routers = []) {
-        return this.initDb()
-            .then(() => this.initRoutes(routers).then(() => this));
+        return Server.initDb()
+            .then(() => {
+            return this.initRoutes(routers).then(() => this);
+        })
+            .catch((err) => {
+            log.error(JSON.stringify(err));
+        });
     }
 }
 exports.Server = Server;

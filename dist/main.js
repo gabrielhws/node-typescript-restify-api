@@ -10,7 +10,7 @@ server.bootstrap(routes_1.Routes)
     log.info('API Restful with Restify running: %s', server.app.address().port);
 })
     .catch(error => {
-    log.fatal('Server failed to start');
+    log.error('Server failed to start');
     log.fatal(JSON.stringify(error));
     process.exit(1);
 });
