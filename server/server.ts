@@ -3,6 +3,9 @@ import {DB} from '../src/middleware/db';
 import * as restify from 'restify';
 import * as log4js from 'log4js';
 import {Router} from '../src/middleware/router';
+import {mergePatchBodyParser} from '../src/helpers/merge-patch-parser.helper';
+import {handleError} from '../src/middleware/error.handler';
+
 const log = log4js.getLogger('server');
 
 export class Server {
@@ -22,6 +25,9 @@ export class Server {
                     version:'1.0.0'
                 });
                 this.app.use(restify.plugins.queryParser());
+                this.app.use(restify.plugins.bodyParser());
+                this.app.use(mergePatchBodyParser);
+                this.app.on('restifyError', handleError);
 
                 for (let router of routers){
                     router.applyRoutes(this.app);
@@ -30,6 +36,8 @@ export class Server {
                 this.app.listen(config.port,()=>{
                     resolve(this.app);
                 });
+
+
             }catch (error) {
                 log.fatal('Error in Init Routes: %s', JSON.stringify(error));
                 reject(error);
