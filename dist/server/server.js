@@ -4,41 +4,50 @@ const all_1 = require("../config/env/all");
 const db_1 = require("../src/middleware/db");
 const restify = require("restify");
 const log4js = require("log4js");
-const log = log4js.getLogger('server');
+const merge_patch_parser_helper_1 = require("../src/helpers/merge-patch-parser.helper");
+const error_handler_1 = require("../src/middleware/error.handler");
+const log = log4js.getLogger("server");
 class Server {
-    static initDb() {
-        const db = new db_1.DB();
-        return db.conn().then(() => { }).catch((err) => { log.error(JSON.stringify(err)); });
-    }
-    initRoutes(routers) {
-        return new Promise((resolve, reject) => {
-            try {
-                this.app = restify.createServer({
-                    name: 'typescript-restify-api',
-                    version: '1.0.0'
-                });
-                this.app.use(restify.plugins.queryParser());
-                for (let router of routers) {
-                    router.applyRoutes(this.app);
-                }
-                this.app.listen(all_1.config.port, () => {
-                    resolve(this.app);
-                });
-            }
-            catch (error) {
-                log.fatal('Error in Init Routes: %s', JSON.stringify(error));
-                reject(error);
-            }
+  static initDb() {
+    const db = new db_1.DB();
+    return db
+      .conn()
+      .then(() => {})
+      .catch(err => {
+        log.error(JSON.stringify(err));
+      });
+  }
+  initRoutes(routers) {
+    return new Promise((resolve, reject) => {
+      try {
+        this.app = restify.createServer({
+          name: "typescript-restify-api",
+          version: "1.0.0"
         });
-    }
-    bootstrap(routers = []) {
-        return Server.initDb()
-            .then(() => {
-            return this.initRoutes(routers).then(() => this);
-        })
-            .catch((err) => {
-            log.error(JSON.stringify(err));
+        this.app.use(restify.plugins.queryParser());
+        this.app.use(restify.plugins.bodyParser());
+        this.app.use(merge_patch_parser_helper_1.mergePatchBodyParser);
+        this.app.on("restifyError", error_handler_1.handleError);
+        for (let router of routers) {
+          router.applyRoutes(this.app);
+        }
+        this.app.listen(all_1.config.port, () => {
+          resolve(this.app);
         });
-    }
+      } catch (error) {
+        log.fatal("Error in Init Routes: %s", JSON.stringify(error));
+        reject(error);
+      }
+    });
+  }
+  bootstrap(routers = []) {
+    return Server.initDb()
+      .then(() => {
+        return this.initRoutes(routers).then(() => this);
+      })
+      .catch(err => {
+        log.error(JSON.stringify(err));
+      });
+  }
 }
 exports.Server = Server;

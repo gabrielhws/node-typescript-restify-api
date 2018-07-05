@@ -1,5 +1,4 @@
-import {coreRouter} from '../routers/core.router';
-import {userRouter} from '../routers/user.router';
+import { coreRouter } from "../routers/core.router";
+import { userRouter } from "../routers/user.router";
 
-
-export const Routes= [userRouter, coreRouter];
+export const Routes = [userRouter, coreRouter];
