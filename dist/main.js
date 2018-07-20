@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const server_1 = require("./server/server");
 const log4js = require("log4js");
-const routes_1 = require("./src/middleware/routes");
+const routes_1 = require("./middlewares/routes");
 const server = new server_1.Server();
 const log = log4js.getLogger("main");
 server

@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const all_1 = require("../config/env/all");
-const db_1 = require("../src/middleware/db");
+const db_1 = require("../middlewares/db");
 const restify = require("restify");
 const log4js = require("log4js");
-const merge_patch_parser_helper_1 = require("../src/helpers/merge-patch-parser.helper");
-const error_handler_1 = require("../src/middleware/error.handler");
+const merge_patch_parser_helper_1 = require("../helpers/merge-patch-parser.helper");
+const error_handler_1 = require("../middlewares/error.handler");
 const log = log4js.getLogger("server");
 class Server {
   static initDb() {

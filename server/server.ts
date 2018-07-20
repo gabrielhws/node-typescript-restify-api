@@ -1,10 +1,10 @@
 import { config } from "../config/env/all";
-import { DB } from "../src/middleware/db";
+import { DB } from "../middlewares/db";
 import * as restify from "restify";
 import * as log4js from "log4js";
-import { Router } from "../src/middleware/router";
-import { mergePatchBodyParser } from "../src/helpers/merge-patch-parser.helper";
-import { handleError } from "../src/middleware/error.handler";
+import { Router } from "../middlewares/router";
+import { mergePatchBodyParser } from "../helpers/merge-patch-parser.helper";
+import { handleError } from "../middlewares/error.handler";
 
 const log = log4js.getLogger("server");
 

@@ -1,6 +1,6 @@
 import { Server } from "./server/server";
 import * as log4js from "log4js";
-import { Routes } from "./src/middleware/routes";
+import { Routes } from "./middlewares/routes";
 
 const server = new Server();
 
