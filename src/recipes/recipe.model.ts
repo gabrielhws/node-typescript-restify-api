@@ -2,6 +2,8 @@ import * as mongoose from "mongoose";
 import { User } from "../users/user.model";
 import { Category } from "../categories/category.model";
 import { Schema } from "mongoose";
+import * as log4js from "log4js";
+const log = log4js.getLogger("recipe-model");
 
 export interface Generic extends mongoose.Document {
   description: number;
@@ -116,6 +118,18 @@ const RecipeSchema = new Schema({
   ],
   author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   created: { type: Date, required: true, default: Date.now }
+});
+
+RecipeSchema.post("save", function(doc) {
+  log.debug("%s has been saved", JSON.stringify(doc));
+});
+
+RecipeSchema.post("update", function(doc) {
+  log.debug("%s has been updated", JSON.stringify(doc));
+});
+
+RecipeSchema.post("remove", function(doc) {
+  log.debug("%s has been removed", JSON.stringify(doc));
 });
 
 export const Recipe = mongoose.model<Recipe>("Recipe", RecipeSchema);

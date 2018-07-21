@@ -27,8 +27,7 @@ const CategorySchema = new Schema({
   },
   position: {
     type: Number,
-    unique: true,
-    required: true
+    required: false
   },
   created: { type: Date, required: true, default: Date.now }
 });

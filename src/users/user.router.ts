@@ -16,7 +16,10 @@ class UserRouter extends Model<User> {
   }
 
   applyRoutes(app: restify.Server) {
-    app.get("/users", this.findAll);
+    app.get({ path: "/users", version: "2.0.0" }, [
+      users.findByEmail,
+      this.findAll
+    ]);
     app.post("/users", this.create);
     app.get("/users/:id", [this.validateId, this.findById]);
     app.put("/users/:id", [this.validateId, this.replace]);

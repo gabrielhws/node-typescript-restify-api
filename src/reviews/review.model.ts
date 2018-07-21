@@ -3,7 +3,7 @@ import * as log4js from "log4js";
 import { User } from "../users/user.model";
 import { Recipe } from "../recipes/recipe.model";
 import { Schema } from "mongoose";
-const log = log4js.getLogger("user-model");
+const log = log4js.getLogger("review-model");
 
 export interface Review extends mongoose.Document {
   rating: number;
@@ -16,6 +16,8 @@ export interface Review extends mongoose.Document {
 const ReviewSchema = new Schema({
   rating: {
     type: Number,
+    min: 1,
+    max: 5,
     required: true
   },
   comments: {

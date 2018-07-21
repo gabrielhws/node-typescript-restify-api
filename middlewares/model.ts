@@ -1,13 +1,28 @@
 import { Router } from "./router";
 import * as mongoose from "mongoose";
 import { NotFoundError } from "restify-errors";
+import * as log4js from "log4js";
+const log = log4js.getLogger("model-base");
 
 export abstract class Model<D extends mongoose.Document> extends Router {
   constructor(protected model: mongoose.Model<D>) {
     super();
   }
 
+  protected prepareOne(
+    query: mongoose.DocumentQuery<D, D>
+  ): mongoose.DocumentQuery<D, D> {
+    return query;
+  }
+
+  protected prepareAll(
+    query: mongoose.DocumentQuery<D[], D>
+  ): mongoose.DocumentQuery<D[], D> {
+    return query;
+  }
+
   validateId = (req, res, next) => {
+    log.trace("Enter in ValidateId");
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       next(new NotFoundError("Document not found or Id invalid"));
     } else {
@@ -16,21 +31,23 @@ export abstract class Model<D extends mongoose.Document> extends Router {
   };
 
   findAll = (req, res, next) => {
-    this.model
-      .find()
+    log.trace("Enter in FindAll");
+    this.prepareAll(this.model.find())
       .then(this.renderAll(res, next))
       .catch(next);
   };
 
   findById = (req, res, next) => {
+    log.trace("Enter in FindById");
     const id = req.params.id;
-    this.model
-      .findById(id)
+
+    this.prepareOne(this.model.findById(id))
       .then(this.render(res, next))
       .catch(next);
   };
 
   create = (req, res, next) => {
+    log.trace("Enter in Create");
     let document = new this.model(req.body);
 
     document
@@ -40,6 +57,7 @@ export abstract class Model<D extends mongoose.Document> extends Router {
   };
 
   update = (req, res, next) => {
+    log.trace("Enter in Update");
     const options = {
       new: true,
       runValidators: true
@@ -52,6 +70,7 @@ export abstract class Model<D extends mongoose.Document> extends Router {
   };
 
   replace = (req, res, next) => {
+    log.trace("Enter in Replace");
     const id = req.params.id;
     const body = req.body;
     const options = {
@@ -64,7 +83,7 @@ export abstract class Model<D extends mongoose.Document> extends Router {
       .exec()
       .then(result => {
         if (result.n) {
-          return this.model.findById(id);
+          return this.prepareOne(this.model.findById(id));
         } else {
           throw new NotFoundError("Document not found");
         }
@@ -74,6 +93,7 @@ export abstract class Model<D extends mongoose.Document> extends Router {
   };
 
   delete = (req, res, next) => {
+    log.trace("Enter in Delete");
     const id = req.params.id;
 
     this.model
