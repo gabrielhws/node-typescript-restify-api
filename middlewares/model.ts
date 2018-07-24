@@ -5,8 +5,11 @@ import * as log4js from "log4js";
 const log = log4js.getLogger("model-base");
 
 export abstract class Model<D extends mongoose.Document> extends Router {
+  basePath: string;
+
   constructor(protected model: mongoose.Model<D>) {
     super();
+    this.basePath = `/${model.collection.name}`;
   }
 
   protected prepareOne(
@@ -19,6 +22,12 @@ export abstract class Model<D extends mongoose.Document> extends Router {
     query: mongoose.DocumentQuery<D[], D>
   ): mongoose.DocumentQuery<D[], D> {
     return query;
+  }
+
+  envelope(document: any): any {
+    let resource = Object.assign({ _links: {} }, document.toJSON());
+    resource._links.self = `${this.basePath}/${resource._id}`;
+    return resource;
   }
 
   validateId = (req, res, next) => {

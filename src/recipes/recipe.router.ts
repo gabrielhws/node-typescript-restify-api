@@ -26,12 +26,30 @@ class RecipeRouter extends Model<Recipe> {
       .populate("author", "displayName username image");
   }
 
+  envelope(document) {
+    let resource = super.envelope(document);
+    const userId = document.author._id ? document.author._id : document.author;
+    const categories = document.caregories;
+    const bookmarks = document.bookmarks;
+    categories.forEach(category => {
+      let _category = category._id ? category._id : category;
+      resource._links.categories.push(_category);
+    });
+    bookmarks.forEach(bookmark => {
+      let _bookmark = bookmark._id ? bookmark._id : bookmark;
+      resource._links.bookmarks.push(_bookmark);
+    });
+    resource._links.author = `/users/${userId}`;
+
+    return resource;
+  }
+
   applyRoutes(app: restify.Server) {
-    app.get("/recipes", this.findAll);
-    app.post("/recipes", this.create);
-    app.get("/recipes/:id", [this.validateId, this.findById]);
-    app.patch("/recipes/:id", [this.validateId, this.update]);
-    app.del("/recipes/:id", [this.validateId, this.delete]);
+    app.get(`${this.basePath}`, this.findAll);
+    app.post(`${this.basePath}`, this.create);
+    app.get(`${this.basePath}/:id`, [this.validateId, this.findById]);
+    app.patch(`${this.basePath}/:id`, [this.validateId, this.update]);
+    app.del(`${this.basePath}/:id`, [this.validateId, this.delete]);
   }
 }
 

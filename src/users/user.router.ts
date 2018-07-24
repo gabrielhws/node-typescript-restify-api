@@ -15,6 +15,12 @@ class UserRouter extends Model<User> {
     });
   }
 
+  envelope(document) {
+    let resource = super.envelope(document);
+    resource._links.address = `${this.basePath}/${resource._id}/address`;
+    return resource;
+  }
+
   applyRoutes(app: restify.Server) {
     app.get({ path: "/users", version: "2.0.0" }, [
       users.findByEmail,

@@ -8,12 +8,12 @@ class CategoryRouter extends Model<Category> {
   }
 
   applyRoutes(app: restify.Server) {
-    app.get("/categories", this.findAll);
-    app.post("/categories", this.create);
-    app.get("/categories/:id", [this.validateId, this.findById]);
-    app.patch("/categories/:id", [this.validateId, this.update]);
-    app.put("/categories/:id", [this.validateId, this.replace]);
-    app.del("/categories/:id", [this.validateId, this.delete]);
+    app.get(`${this.basePath}`, this.findAll);
+    app.post(`${this.basePath}`, this.create);
+    app.get(`${this.basePath}:/id`, [this.validateId, this.findById]);
+    app.patch(`${this.basePath}:/id`, [this.validateId, this.update]);
+    app.put(`${this.basePath}:/id`, [this.validateId, this.replace]);
+    app.del(`${this.basePath}:/id`, [this.validateId, this.delete]);
   }
 }
 

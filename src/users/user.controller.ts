@@ -1,12 +1,12 @@
 import { User } from "./user.model";
 import * as log4js from "log4js";
 import { NotFoundError } from "restify-errors";
-import { Router } from "../../middlewares/router";
+import { Model } from "../../middlewares/model";
 import * as restify from "restify";
 
 const log = log4js.getLogger("user-controller");
 
-class UserController extends Router {
+class UserController extends Model<User> {
   applyRoutes(app: restify.Server) {}
 
   findAddress = (req, res, next) => {
@@ -49,7 +49,14 @@ class UserController extends Router {
     const email = req.query.email;
 
     if (email) {
-      User.find({ email: email })
+      User.getByEmail(email)
+        .then(user => {
+          if (user) {
+            return [user];
+          } else {
+            return [];
+          }
+        })
         .then(this.render(res, next))
         .catch(next);
     } else {
@@ -58,4 +65,4 @@ class UserController extends Router {
   };
 }
 
-export const users = new UserController();
+export const users = new UserController(User);

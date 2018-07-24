@@ -74,6 +74,12 @@ export interface User extends mongoose.Document {
   created: Date;
 }
 
+export interface UserModel extends mongoose.Model<User> {
+  getById(id: mongoose.Types.ObjectId): Promise<User>;
+  getByEmail(email: string): Promise<User>;
+  getByUsername(username: string): Promise<User>;
+}
+
 const AddressSubSchema = new Schema({
   type: {
     type: String,
@@ -342,31 +348,25 @@ UserSchema.post("remove", function(doc) {
  * Statics
  */
 
-UserSchema.statics.getAll = function(cb) {
-  log.trace("Enter in Get All");
-
-  return this.find().exec(cb);
-};
-
-UserSchema.statics.getById = function(id, cb) {
+UserSchema.statics.getById = function(id: mongoose.Types.ObjectId) {
   log.trace("Enter in Get By Id");
 
-  return this.findById(id).exec(cb);
+  return this.findById(id);
 };
 
-UserSchema.statics.getByUsername = function(username, cb) {
+UserSchema.statics.getByUsername = function(username: string) {
   log.trace("Enter in Get By Username");
 
-  return this.findOne({ username: username }).exec(cb);
+  return this.findOne({ username: username });
 };
 
-UserSchema.statics.getByEmail = function(email, cb) {
+UserSchema.statics.getByEmail = function(email: string) {
   log.trace("Enter in Find User By Email");
 
-  return this.findOne({ email: email }).exec(cb);
+  return this.findOne({ email: email });
 };
 
-UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
+UserSchema.statics.findUniqueUsername = function(username: string, suffix, cb) {
   log.trace("Enter in Find Unique Username");
   const _this = this;
   let possibleUsername = username + (suffix || "");
@@ -378,19 +378,15 @@ UserSchema.statics.findUniqueUsername = function(username, suffix, callback) {
     function(err, user) {
       if (!err) {
         if (!user) {
-          callback(possibleUsername);
+          cb(possibleUsername);
         } else {
-          return _this.findUniqueUsername(
-            username,
-            (suffix || 0) + 1,
-            callback
-          );
+          return _this.findUniqueUsername(username, (suffix || 0) + 1, cb);
         }
       } else {
-        callback(null);
+        cb(null);
       }
     }
   );
 };
 
-export const User = mongoose.model<User>("User", UserSchema);
+export const User = mongoose.model<User, UserModel>("User", UserSchema);

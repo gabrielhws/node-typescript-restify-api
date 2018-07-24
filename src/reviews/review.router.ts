@@ -24,11 +24,22 @@ class ReviewRouter extends Model<Review> {
       .populate("recipe", "name");
   }
 
+  envelope(document) {
+    let resource = super.envelope(document);
+    const recipeId = document.recipe._id
+      ? document.recipe._id
+      : document.recipe;
+    const userId = document.author._id ? document.author._id : document.author;
+    resource._links.recipe = `/recipes/${recipeId}`;
+    resource._links.author = `/users/${userId}`;
+    return resource;
+  }
+
   applyRoutes(app: restify.Server) {
-    app.get("/reviews", this.findAll);
-    app.post("/reviews", this.create);
-    app.get("/reviews/:id", [this.validateId, this.findById]);
-    app.del("/reviews/:id", [this.validateId, this.delete]);
+    app.get(`${this.basePath}`, this.findAll);
+    app.post(`${this.basePath}`, this.create);
+    app.get(`${this.basePath}/:id`, [this.validateId, this.findById]);
+    app.del(`${this.basePath}/:id`, [this.validateId, this.delete]);
   }
 }
 
