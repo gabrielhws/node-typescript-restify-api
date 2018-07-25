@@ -2,6 +2,8 @@ import { Model } from "../../middlewares/model";
 import * as restify from "restify";
 import { Review } from "./review.model";
 import * as mongoose from "mongoose";
+import * as log4js from "log4js";
+const log = log4js.getLogger("review-router");
 
 class ReviewRouter extends Model<Review> {
   constructor() {
@@ -25,6 +27,7 @@ class ReviewRouter extends Model<Review> {
   }
 
   envelope(document) {
+    log.trace("Enter in Envelope");
     let resource = super.envelope(document);
     const recipeId = document.recipe._id
       ? document.recipe._id

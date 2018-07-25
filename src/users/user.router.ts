@@ -2,6 +2,8 @@ import { Model } from "../../middlewares/model";
 import * as restify from "restify";
 import { User } from "./user.model";
 import { users } from "./user.controller";
+import * as log4js from "log4js";
+const log = log4js.getLogger("user-router");
 
 class UserRouter extends Model<User> {
   constructor() {
@@ -16,6 +18,7 @@ class UserRouter extends Model<User> {
   }
 
   envelope(document) {
+    log.trace("Enter in Envelope");
     let resource = super.envelope(document);
     resource._links.address = `${this.basePath}/${resource._id}/address`;
     return resource;
