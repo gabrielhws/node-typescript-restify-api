@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "typescript-restify-api",
+      "script": "dist/main.js",
+      "watch": false
+    }
+  ]
+}

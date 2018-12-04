@@ -1,13 +1,13 @@
 /**
  * User dependencies.
  */
-import * as mongoose from "mongoose";
-import * as log4js from "log4js";
-import * as bcrypt from "bcrypt";
-import { validateCPF } from "../../helpers/validators.helper";
-import { config } from "../../config/env/all";
-import { Schema } from "mongoose";
-const log = log4js.getLogger("user-model");
+import * as mongoose from 'mongoose';
+import * as log4js from 'log4js';
+import * as bcrypt from 'bcrypt';
+import { validateCPF } from '../../helpers/validators.helper';
+import config from '../../config/config';
+import { Schema } from 'mongoose';
+const log = log4js.getLogger('user-model');
 
 /**
  * User Schema
@@ -78,51 +78,52 @@ export interface UserModel extends mongoose.Model<User> {
   getById(id: mongoose.Types.ObjectId): Promise<User>;
   getByEmail(email: string): Promise<User>;
   getByUsername(username: string): Promise<User>;
+  findUniqueUsername(username: string, suffix: any): Promise<any>;
 }
 
 const AddressSubSchema = new Schema({
   type: {
     type: String,
-    enum: ["commercial", "residential"],
+    enum: ['commercial', 'residential'],
     required: false,
-    default: ["residential"]
+    default: ['residential'],
   },
   zip_code: {
     type: String,
-    required: false
+    required: false,
   },
   address: {
     type: String,
-    required: false
+    required: false,
   },
   address_2: {
     type: String,
-    required: false
+    required: false,
   },
   number: {
     type: String,
-    required: false
+    required: false,
   },
   city: {
     type: String,
-    required: false
+    required: false,
   },
   province: {
     type: String,
-    required: false
+    required: false,
   },
   country: {
     type: String,
-    required: false
+    required: false,
   },
   country_code: {
     type: String,
-    required: false
+    required: false,
   },
   neighborhood: {
     type: String,
-    required: false
-  }
+    required: false,
+  },
 });
 
 const UserSchema = new Schema({
@@ -130,99 +131,102 @@ const UserSchema = new Schema({
     type: String,
     trim: true,
     required: true,
-    minlength: 3
+    minlength: 3,
   },
   firstName: {
     type: String,
     trim: true,
     required: true,
-    minlength: 3
+    minlength: 3,
   },
   lastName: {
     type: String,
     trim: true,
     required: true,
-    minlength: 3
+    minlength: 3,
   },
   email: {
     type: String,
     trim: true,
     unique: true,
     lowercase: true,
-    match: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    match: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
   },
   username: {
     type: String,
     trim: true,
     unique: true,
     lowercase: true,
-    required: true
+    required: true,
   },
   roles: {
     type: String,
-    enum: ["user", "admin"],
-    default: ["user"],
-    required: true
+    enum: ['user', 'admin'],
+    default: ['user'],
+    required: true,
   },
   birth_date: {
     type: Date,
-    required: false
+    required: false,
   },
   gender: {
     type: String,
-    enum: ["male", "female", "other"],
-    required: false
+    enum: ['male', 'female', 'other', null],
+    required: false,
+    default: () => {
+      return null;
+    },
   },
   image: {
     type: String,
-    required: false
+    required: false,
   },
   cpf: {
     type: String,
     required: false,
     validate: {
       validator: validateCPF,
-      message: "{PATH}: Invalid CPF ({VALUE})"
-    }
+      message: '{PATH}: Invalid CPF ({VALUE})',
+    },
   },
   document: {
     type: String,
-    required: false
+    required: false,
   },
   location: {
     lat_lng: [Number],
     reference: {
       type: String,
-      required: false
-    }
+      required: false,
+    },
   },
   timezone: {
     type: String,
-    required: false
+    required: false,
   },
   preferred_language: {
     type: String,
-    enum: ["en", "es", "pt"],
-    default: ["pt"],
-    required: true
+    enum: ['en', 'es', 'pt'],
+    default: ['pt'],
+    required: true,
   },
   preferred_currency: {
     type: String,
-    enum: ["eur", "usd", "brl", "gbl"],
-    default: ["brl"],
-    required: true
+    enum: ['eur', 'usd', 'brl', 'gbl'],
+    default: ['brl'],
+    required: true,
   },
   moip: {
     customer_id: {
       type: String,
-      required: false
+      required: false,
     },
     merchant_id: {
       type: String,
-      required: false
+      required: false,
     },
     original_costumer: {},
-    original_merchant: {}
+    original_merchant: {},
   },
   stripe: {},
   paypal: {},
@@ -230,64 +234,64 @@ const UserSchema = new Schema({
     type: [AddressSubSchema],
     select: false,
     required: false,
-    default: []
+    default: [],
   },
   providers: {
     sample: {
       has: {
         type: Boolean,
         default: false,
-        required: true
+        required: true,
       },
       locate: {
-        type: String
+        type: String,
       },
       password: {
         type: String,
         select: false,
-        required: false
+        required: false,
       },
       resetPasswordToken: {
         type: String,
         select: false,
-        required: false
+        required: false,
       },
       resetPasswordExpires: {
         type: Date,
         select: false,
-        required: false
-      }
+        required: false,
+      },
     },
     facebook: {},
     google: {},
     github: {},
-    linkedin: {}
+    linkedin: {},
   },
   active: {
     type: Boolean,
     default: true,
-    required: true
+    required: true,
   },
   verified: {
     type: Boolean,
     default: false,
-    required: true
+    required: true,
   },
   verified_token: {
     type: String,
     select: false,
-    required: false
+    required: false,
   },
   verified_token_expires: {
     type: Date,
     select: false,
-    required: false
+    required: false,
   },
   created: {
     type: Date,
     default: Date.now,
-    required: true
-  }
+    required: true,
+  },
 });
 
 /**
@@ -297,24 +301,24 @@ const UserSchema = new Schema({
 const hashPassword = (obj, next) => {
   bcrypt
     .hash(obj.providers.sample.password, config.security.saltRounds)
-    .then(hash => {
+    .then((hash) => {
       obj.providers.sample.password = hash;
       next();
     })
     .catch(next);
 };
 
-const saveMiddleware = next => {
+const saveMiddleware = (next) => {
   const user: any = this;
 
-  if (!user.isModified("providers.sample.password")) {
+  if (!user.isModified('providers.sample.password')) {
     return next();
   } else {
     hashPassword(user, next);
   }
 };
 
-const updateMiddleware = next => {
+const updateMiddleware = (next) => {
   if (!this.getUpdate().providers.sample.password) {
     return next();
   } else {
@@ -322,26 +326,26 @@ const updateMiddleware = next => {
   }
 };
 
-UserSchema.pre("save", saveMiddleware);
+UserSchema.pre('save', saveMiddleware);
 
-UserSchema.pre("findOneAndUpdate", updateMiddleware);
+UserSchema.pre('findOneAndUpdate', updateMiddleware);
 
-UserSchema.pre("update", updateMiddleware);
+UserSchema.pre('update', updateMiddleware);
 
 /**
  * CRUD
  */
 
-UserSchema.post("save", function(doc) {
-  log.debug("%s has been saved", JSON.stringify(doc));
+UserSchema.post('save', function(doc) {
+  log.debug('%s has been saved', JSON.stringify(doc));
 });
 
-UserSchema.post("update", function(doc) {
-  log.debug("%s has been updated", JSON.stringify(doc));
+UserSchema.post('update', function(doc) {
+  log.debug('%s has been updated', JSON.stringify(doc));
 });
 
-UserSchema.post("remove", function(doc) {
-  log.debug("%s has been removed", JSON.stringify(doc));
+UserSchema.post('remove', function(doc) {
+  log.debug('%s has been removed', JSON.stringify(doc));
 });
 
 /**
@@ -349,44 +353,49 @@ UserSchema.post("remove", function(doc) {
  */
 
 UserSchema.statics.getById = function(id: mongoose.Types.ObjectId) {
-  log.trace("Enter in Get By Id");
+  log.trace('Enter in Get By Id');
 
   return this.findById(id);
 };
 
 UserSchema.statics.getByUsername = function(username: string) {
-  log.trace("Enter in Get By Username");
+  log.trace('Enter in Get By Username');
 
   return this.findOne({ username: username });
 };
 
 UserSchema.statics.getByEmail = function(email: string) {
-  log.trace("Enter in Find User By Email");
+  log.trace('Enter in Find User By Email');
 
   return this.findOne({ email: email });
 };
 
-UserSchema.statics.findUniqueUsername = function(username: string, suffix, cb) {
-  log.trace("Enter in Find Unique Username");
+UserSchema.statics.findUniqueUsername = function(
+  username: string,
+  suffix: any
+) {
+  log.trace('Enter in Find Unique Username');
   const _this = this;
-  let possibleUsername = username + (suffix || "");
+  let possibleUsername = username + (suffix || '');
 
-  _this.findOne(
-    {
-      username: possibleUsername
-    },
-    function(err, user) {
-      if (!err) {
-        if (!user) {
-          cb(possibleUsername);
+  return new Promise((resolve, reject) => {
+    _this.findOne(
+      {
+        username: possibleUsername,
+      },
+      function(err, user) {
+        if (!err) {
+          if (!user) {
+            resolve(possibleUsername);
+          } else {
+            return _this.findUniqueUsername(username, (suffix || 0) + 1);
+          }
         } else {
-          return _this.findUniqueUsername(username, (suffix || 0) + 1, cb);
+          resolve(null);
         }
-      } else {
-        cb(null);
       }
-    }
-  );
+    );
+  });
 };
 
-export const User = mongoose.model<User, UserModel>("User", UserSchema);
+export const User = mongoose.model<User, UserModel>('User', UserSchema);
