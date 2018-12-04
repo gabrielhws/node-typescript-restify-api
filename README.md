@@ -7,7 +7,7 @@
 1.  Clone this repo
     `https://github.com/gabrielhws/node-typescript-restify-api.git`
 1.  Run `npm install` to install dependencies.<br />
-1.  Run `npm run tsc` to compile and create /dist/\*.js .<br />
+1.  Run `npm run tsc` to compile and create /dist/\*.js files.<br />
 1.  Run `npm start` to see the app at `http://localhost:3000`
 
 ## Lint
